@@ -1,4 +1,5 @@
 #include "napi/native_api.h"
+#include <cstdint>
 #include <unordered_map>
 
 static napi_value Add(napi_env env, napi_callback_info info) {
@@ -7,11 +8,11 @@ static napi_value Add(napi_env env, napi_callback_info info) {
 
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
+    //     napi_valuetype valuetype0;
+    //     napi_typeof(env, args[0], &valuetype0);
+    //
+    //     napi_valuetype valuetype1;
+    //     napi_typeof(env, args[1], &valuetype1);
 
     double value0;
     napi_get_value_double(env, args[0], &value0);
@@ -30,11 +31,11 @@ static napi_value Subtract(napi_env env, napi_callback_info info) {
     napi_value args[2] = {nullptr};
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
+    //     napi_valuetype valuetype0;
+    //     napi_typeof(env, args[0], &valuetype0);
+    //
+    //     napi_valuetype valuetype1;
+    //     napi_typeof(env, args[1], &valuetype1);
 
     double value0;
     napi_get_value_double(env, args[0], &value0);
@@ -53,11 +54,11 @@ static napi_value Multiply(napi_env env, napi_callback_info info) {
     napi_value args[2] = {nullptr};
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
+    //     napi_valuetype valuetype0;
+    //     napi_typeof(env, args[0], &valuetype0);
+    //
+    //     napi_valuetype valuetype1;
+    //     napi_typeof(env, args[1], &valuetype1);
 
     double value0;
     napi_get_value_double(env, args[0], &value0);
@@ -76,11 +77,11 @@ static napi_value Divide(napi_env env, napi_callback_info info) {
 
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
+    //     napi_valuetype valuetype0;
+    //     napi_typeof(env, args[0], &valuetype0);
+    //
+    //     napi_valuetype valuetype1;
+    //     napi_typeof(env, args[1], &valuetype1);
 
     double value0;
     napi_get_value_double(env, args[0], &value0);
@@ -105,8 +106,8 @@ static napi_value Factorial(napi_env env, napi_callback_info info) {
     napi_value args[1] = {nullptr};
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
 
-    napi_valuetype valuetype;
-    napi_typeof(env, args[0], &valuetype);
+    //     napi_valuetype valuetype;
+    //     napi_typeof(env, args[0], &valuetype);
 
     double value;
     napi_get_value_double(env, args[0], &value);
@@ -130,31 +131,27 @@ static napi_value TwoSum(napi_env env, napi_callback_info info) {
     size_t argc = 2;
     napi_value args[2] = {nullptr, nullptr};
     napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
-
     if (argc != 2) {
         napi_throw_error(env, nullptr, "Expected two arguments");
         return nullptr;
     }
-
-    double target;
-    napi_get_value_double(env, args[1], &target);
-
     napi_valuetype valuetype;
     napi_typeof(env, args[0], &valuetype);
-
     if (valuetype != napi_object) {
         napi_throw_error(env, nullptr, "First argument must be an array");
         return nullptr;
     }
-
     uint32_t length;
     napi_get_array_length(env, args[0], &length);
+
+    double target;
+    napi_get_value_double(env, args[1], &target);
 
     std::unordered_map<double, uint32_t> map;
     napi_value ret_arr;
     napi_create_array(env, &ret_arr);
 
-    for (uint32_t i = 0; i < length; i++) {
+    for (uint32_t i = 0; i < length; ++i) {
         napi_value element;
         napi_get_element(env, args[0], i, &element);
 
