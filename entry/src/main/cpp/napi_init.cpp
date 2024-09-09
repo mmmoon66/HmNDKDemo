@@ -1,4 +1,5 @@
 #include "napi/native_api.h"
+#include <unordered_map>
 
 static napi_value Add(napi_env env, napi_callback_info info) {
     size_t argc = 2;
@@ -116,13 +117,63 @@ static napi_value Factorial(napi_env env, napi_callback_info info) {
     }
 
     double fact = 1;
-    while(value > 1) {
+    while (value > 1) {
         fact *= value;
         value -= 1;
     }
     napi_value ret;
     napi_create_double(env, fact, &ret);
     return ret;
+}
+
+static napi_value TwoSum(napi_env env, napi_callback_info info) {
+    size_t argc = 2;
+    napi_value args[2] = {nullptr, nullptr};
+    napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
+
+    if (argc != 2) {
+        napi_throw_error(env, nullptr, "Expected two arguments");
+        return nullptr;
+    }
+
+    double target;
+    napi_get_value_double(env, args[1], &target);
+
+    napi_valuetype valuetype;
+    napi_typeof(env, args[0], &valuetype);
+
+    if (valuetype != napi_object) {
+        napi_throw_error(env, nullptr, "First argument must be an array");
+        return nullptr;
+    }
+
+    uint32_t length;
+    napi_get_array_length(env, args[0], &length);
+
+    std::unordered_map<double, uint32_t> map;
+    napi_value ret_arr;
+    napi_create_array(env, &ret_arr);
+
+    for (uint32_t i = 0; i < length; i++) {
+        napi_value element;
+        napi_get_element(env, args[0], i, &element);
+
+        double value;
+        napi_get_value_double(env, element, &value);
+
+        double complement = target - value;
+        if (map.find(complement) != map.end()) {
+            napi_value index1, index2;
+            napi_create_uint32(env, map[complement], &index1);
+            napi_create_uint32(env, i, &index2);
+
+            napi_set_element(env, ret_arr, 0, index1);
+            napi_set_element(env, ret_arr, 1, index2);
+            return ret_arr;
+        }
+        map[value] = i;
+    }
+    return ret_arr;
 }
 
 EXTERN_C_START
@@ -133,6 +184,7 @@ static napi_value Init(napi_env env, napi_value exports) {
         {"multiply", nullptr, Multiply, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"divide", nullptr, Divide, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"factorial", nullptr, Factorial, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"twoSum", nullptr, TwoSum, nullptr, nullptr, nullptr, napi_default, nullptr},
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
